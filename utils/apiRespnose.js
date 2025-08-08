@@ -4,7 +4,7 @@ class ApiResponse {
   }
 
   error(res, message = "Internal Server Error", errorStack, statusCode = 500) {
-    if (errorStack) {
+    if (!errorStack) {
       return res.status(statusCode).json({ message });
     }
     return res.status(statusCode).json({ message, error: errorStack });
