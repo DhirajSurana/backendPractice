@@ -1,73 +1,72 @@
-import { ItemModel } from "../models/item.model.js";
+import { Item } from "../models/item.model.js";
+import ApiRespnose from "../utils/apiRespnose.js";
 
 class itemController {
   async createItem(req, res) {
     try {
-      const newItem = ItemModel.create(req.body);
-      if (ItemModel.findById(newItem._id)) {
-        res
-          .status(201)
-          .json({ message: "Item created successfully", data: newItem });
+      const newItem = await Item.create(req.body);
+      if (await Item.findById(newItem._id)) {
+        return ApiRespnose.success(
+          res,
+          newItem,
+          "Item created successfully",
+          201
+        );
       } else {
-        res.status(400).json({ message: "Failed to create item" });
+        return ApiRespnose.error(res, "Failed to create item", null, 400);
       }
     } catch (error) {
-      res.status(500).json({ message: "Error creating item", error });
+      return ApiRespnose.error(res, "Error creating item", error, 500);
     }
   }
 
   async getAllItems(req, res) {
     try {
-      const items = await ItemModel.find();
-      res
-        .status(200)
-        .json({ message: "item fetched successfully", data: items });
+      const items = await Item.find();
+      return ApiRespnose.success(res, items, "Items fetched successfully");
     } catch (error) {
-      res.status(500).json({ message: "Error fetching items", error });
+      return ApiRespnose.error(res, "Error fetching items", error);
     }
   }
   async getItem(req, res) {
     try {
       const { id } = req.params;
-      const item = await ItemModel.findById(id);
+      const item = await Item.findById(id);
+
       if (!item) {
-        return res.status(404).json({ message: "Item not found" });
+        return ApiRespnose.error(res, "Item not found", null, 404);
       }
-      res
-        .status(200)
-        .json({ message: "item fetched successfully", data: item });
+      return ApiRespnose.success(res, item, "Item fetched successfully");
     } catch (error) {
-      res.status(500).json({ message: "Error fetching items", error });
+      return ApiRespnose.error(res, "Item not found", error, 404);
     }
   }
 
   async updateItem(req, res) {
     try {
       const { id } = req.params;
-      const updatedItem = await ItemModel.findByIdAndUpdate(id, req.body, {
+      const updatedItem = await Item.findByIdAndUpdate(id, req.body, {
         new: true,
       });
       if (!updatedItem) {
-        return res.status(404).json({ message: "Item not found" });
+        return ApiRespnose.error(res, "Item not found", null, 404);
       }
-      res
-        .status(200)
-        .json({ message: "item updated successfully", data: updatedItem });
+      return ApiRespnose.success(res, updatedItem, "Item updated successfully");
     } catch (error) {
-      res.status(500).json({ message: "Error updating item", error });
+      return ApiRespnose.error(res, "Error updating item", error);
     }
   }
 
   async deleteItem(req, res) {
     try {
       const { id } = req.params;
-      const deletedItem = await ItemModel.findByIdAndDelete(id);
+      const deletedItem = await Item.findByIdAndDelete(id);
       if (!deletedItem) {
-        return res.status(404).json({ message: "Item not found" });
+        return ApiRespnose.error(res, "Item not found", null, 404);
       }
-      res.status(200).json({ message: "Item deleted successfully" });
+      return ApiRespnose.success(res, deletedItem, "Item deleted successfully");
     } catch (error) {
-      res.status(500).json({ message: "Error deleting item", error });
+      return ApiRespnose.error(res, "Error deleting item", error);
     }
   }
 }

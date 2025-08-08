@@ -25,4 +25,4 @@ const itemSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export const ItemModel = mongoose.model("item", itemSchema);
+export const Item = mongoose.model("item", itemSchema);
