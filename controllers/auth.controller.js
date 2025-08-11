@@ -1,7 +1,6 @@
 import { User } from "../models/user.model.js";
 import apiRespnose from "../utils/apiRespnose.js";
 import { createAccessToken } from "../utils/createAccessToken.js";
-import isValidPassword from "../utils/isValidPassword.js";
 
 class authController {
   async signUp(req, res) {
@@ -41,10 +40,7 @@ class authController {
       return apiRespnose.error(res, "User not found", null, 404);
     }
 
-    const isPasswordValid = await isValidPassword(
-      password,
-      existingUser.password
-    );
+    const isPasswordValid = await existingUser.isValidPassword(password);
 
     if (!isPasswordValid) {
       return apiRespnose.error(res, "Invalid credentials", null, 401);
